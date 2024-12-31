@@ -1,0 +1,222 @@
+{% extends "base.html" %} {% block title %}მთავარი{% endblock %} {% block
+content %}
+
+<!-- Hero Section -->
+<section class="home-hero">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-8">
+        <h1>აღმოაჩინეთ და გააზიარეთ საგანმანათლებლო რესურსები</h1>
+        <p>
+          ჩვენი პლატფორმა გთავაზობთ მრავალფეროვან სასწავლო მასალებს, რომლებიც
+          დაგეხმარებათ განათლების მიღებასა და პროფესიულ განვითარებაში.
+        </p>
+        {% if not current_user.is_authenticated %}
+        <div class="d-flex gap-3">
+          <a href="{{ url_for('register') }}" class="btn btn-light">
+            <i class="fas fa-user-plus me-2"></i>შემოგვიერთდით
+          </a>
+          <a href="{{ url_for('login') }}" class="btn btn-outline-light">
+            <i class="fas fa-sign-in-alt me-2"></i>შესვლა
+          </a>
+        </div>
+        {% else %}
+        <div class="d-flex gap-3">
+          <a href="{{ url_for('new_material') }}" class="btn btn-light">
+            <i class="fas fa-plus me-2"></i>დაამატეთ მასალა
+          </a>
+          <a href="#materials-section" class="btn btn-outline-light scroll-to">
+            <i class="fas fa-book me-2"></i>ყველა მასალა
+          </a>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Features Section -->
+<section class="features-section">
+  <div class="container">
+    <div class="section-title">
+      <h2>რას გთავაზობთ</h2>
+      <p>აღმოაჩინეთ მრავალფეროვანი საგანმანათლებლო რესურსები ერთ სივრცეში</p>
+    </div>
+    <div class="row g-4">
+      <div class="col-md-4">
+        <div class="feature-card">
+          <div class="feature-icon blue">
+            <i class="fas fa-book"></i>
+          </div>
+          <h3>სახელმძღვანელოები</h3>
+          <p>
+            მრავალფეროვანი სასწავლო წიგნები და სახელმძღვანელოები სხვადასხვა
+            საგნებში
+          </p>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="feature-card">
+          <div class="feature-icon green">
+            <i class="fas fa-tasks"></i>
+          </div>
+          <h3>სავარჯიშოები</h3>
+          <p>პრაქტიკული სავარჯიშოები და დავალებები თვითშეფასებისთვის</p>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="feature-card">
+          <div class="feature-icon red">
+            <i class="fas fa-video"></i>
+          </div>
+          <h3>ვიდეო მასალები</h3>
+          <p>ვიდეო გაკვეთილები და საგანმანათლებლო პრეზენტაციები</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Materials Section -->
+<section id="materials-section" class="materials-section">
+  <div class="container">
+    <div class="materials-header">
+      <h2>უახლესი მასალები</h2>
+      <p>გაეცანით ბოლოს დამატებულ საგანმანათლებლო რესურსებს</p>
+      {% if current_user.is_authenticated %}
+      <a href="{{ url_for('new_material') }}" class="btn btn-primary">
+        <i class="fas fa-plus me-2"></i>მასალის დამატება
+      </a>
+      {% endif %}
+    </div>
+
+    <div class="row g-4">
+      {% for material in materials %}
+      <div class="col-md-6">
+        <article class="card material-card">
+          {% if material.image_file %}
+          <img
+            src="{{ url_for('static', filename='uploads/images/' + material.image_file) }}"
+            class="card-img-top"
+            alt="{{ material.title }}"
+          />
+          {% endif %}
+          <div class="card-body">
+            <div class="d-flex justify-content-between align-items-start mb-3">
+              <h3 class="card-title h4">{{ material.title }}</h3>
+              {% if material.author == current_user or current_user.username ==
+              'hageograpia_admin' %}
+              <div class="d-flex gap-2">
+                <a
+                  href="{{ url_for('edit_material', material_id=material.id) }}"
+                  class="btn btn-sm btn-outline-secondary"
+                >
+                  <i class="fas fa-edit"></i>
+                </a>
+                <button
+                  type="button"
+                  class="btn btn-sm btn-outline-danger"
+                  data-bs-toggle="modal"
+                  data-bs-target="#deleteModal{{ material.id }}"
+                >
+                  <i class="fas fa-trash"></i>
+                </button>
+              </div>
+              {% endif %}
+            </div>
+
+            <div class="mb-3">
+              <span class="badge bg-primary">{{ material.subject }}</span>
+              <span class="badge bg-secondary">{{ material.grade_level }}</span>
+              <span class="badge bg-info">{{ material.material_type }}</span>
+            </div>
+
+            <p class="card-text">{{ material.content[:150] }}...</p>
+
+            <div class="d-flex justify-content-between align-items-center">
+              <div class="material-meta">
+                <span
+                  ><i class="fas fa-user"></i>{{ material.author.username
+                  }}</span
+                >
+                <span
+                  ><i class="fas fa-calendar"></i>{{
+                  material.date_posted|georgian_date }}</span
+                >
+              </div>
+              <a
+                href="{{ url_for('material', material_id=material.id) }}"
+                class="btn btn-primary"
+              >
+                <i class="fas fa-eye me-1"></i>ნახვა
+              </a>
+            </div>
+          </div>
+        </article>
+      </div>
+      {% else %}
+      <div class="col-12">
+        <div class="text-center py-5">
+          <p class="text-muted">ჯერ არ არის დამატებული სასწავლო მასალები.</p>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- Delete Modals -->
+{% for material in materials %} {% if material.author == current_user or
+current_user.username == 'hageograpia_admin' %}
+<div class="modal fade" id="deleteModal{{ material.id }}" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">მასალის წაშლა</h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+        ></button>
+      </div>
+      <div class="modal-body">
+        დარწმუნებული ხართ რომ გსურთ მასალის წაშლა? ეს მოქმედება შეუქცევადია.
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+          გაუქმება
+        </button>
+        <form
+          action="{{ url_for('delete_material', material_id=material.id) }}"
+          method="POST"
+          class="d-inline"
+        >
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+          <button type="submit" class="btn btn-danger">წაშლა</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endif %} {% endfor %} {% endblock %} {% block scripts %}
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const scrollLinks = document.querySelectorAll(".scroll-to");
+
+    scrollLinks.forEach((link) => {
+      link.addEventListener("click", function (e) {
+        e.preventDefault();
+        const targetId = this.getAttribute("href");
+        const targetElement = document.querySelector(targetId);
+
+        if (targetElement) {
+          targetElement.scrollIntoView({
+            behavior: "smooth",
+            block: "start",
+          });
+        }
+      });
+    });
+  });
+</script>
+{% endblock %}

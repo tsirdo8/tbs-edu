@@ -1,0 +1,38 @@
+{% extends "base.html" %} {% block title %}{{ title }}{% endblock %} {% block
+content %}
+<div class="container">
+  <div class="form-container">
+    <h2 class="text-center mb-4">{{ title }}</h2>
+    <form method="POST" action="" enctype="multipart/form-data">
+      {{ form.hidden_tag() }}
+      <div class="mb-3">
+        {{ form.title.label(class="form-label") }} {{
+        form.title(class="form-control", placeholder="მაგ: მათემატიკის
+        სახელმძღვანელო მე-9 კლასისთვის") }} {% if form.title.errors %} {% for
+        error in form.title.errors %}
+        <div class="alert alert-danger">{{ error }}</div>
+        {% endfor %} {% endif %}
+      </div>
+      <div class="mb-3">
+        {{ form.content.label(class="form-label") }} {{
+        form.content(class="form-control", rows="10", placeholder="აღწერეთ
+        სასწავლო მასალა: საგანი, კლასი/დონე, თემები, და ა.შ.") }} {% if
+        form.content.errors %} {% for error in form.content.errors %}
+        <div class="alert alert-danger">{{ error }}</div>
+        {% endfor %} {% endif %}
+      </div>
+      <div class="mb-3">
+        {{ form.image.label(class="form-label") }} {{
+        form.image(class="form-control") }}
+        <small class="text-muted"
+          >ატვირთეთ მასალის სურათი ან პრევიუ (დაშვებულია: jpg, png, jpeg)</small
+        >
+        {% if form.image.errors %} {% for error in form.image.errors %}
+        <div class="alert alert-danger">{{ error }}</div>
+        {% endfor %} {% endif %}
+      </div>
+      {{ form.submit(class="btn btn-primary w-100") }}
+    </form>
+  </div>
+</div>
+{% endblock %}

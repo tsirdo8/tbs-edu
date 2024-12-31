@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block title %}Users{% endblock %}
+
+{% block content %}
+    <h1 class="mb-4">Blog Posts</h1>
+    <a href="{{ url_for('register') }}" class="btn btn-primary mb-3">Create New User</a>
+    <hr>
+
+    {% if users %}
+        <ul class="list-group">
+            {% for user in users %}
+                <li class="list-group-item">
+                    <h2>{{ user.name }} {{ user.lastName }}</h2>
+                    <p>Birth Date: {{ user.date }}</p>
+                    <p>Gender: {{ user.gender }}</p>
+                     <form action="{{ url_for('delete_user', user_id=user.id) }}" method="POST" style="display:inline;">
+                <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this account?');">Delete</button>
+            </form>
+
+                     <form action="{{ url_for('edit_user', user_id=user.id) }}" method="POST" style="display:inline;">
+                <button type="submit" class="btn btn-danger">Edit</button>
+            </form>
+                </li>
+                <hr>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No users posts yet. Be the first to create one!</p>
+    {% endif %}
+{% endblock %}

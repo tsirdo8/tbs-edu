@@ -1,0 +1,131 @@
+{% extends "base.html" %} {% block title %}ბლოგი{% endblock %} {% block content
+%}
+<section class="hero-section">
+  <div class="container">
+    <div class="hero-content">
+      <h1>საგანმანათლებლო რესურსები</h1>
+      <p>
+        აღმოაჩინეთ ხარისხიანი სასწავლო მასალები, რომლებიც დაგეხმარებათ პროფესიულ
+        განვითარებაში. ჩვენი პლატფორმა გთავაზობთ მრავალფეროვან საგანმანათლებლო
+        რესურსებს.
+      </p>
+
+      {% if current_user.is_authenticated %}
+      <a href="{{ url_for('new_post') }}" class="hero-action">
+        <i class="fas fa-plus"></i>
+        მასალის დამატება
+      </a>
+      {% else %}
+      <a href="{{ url_for('register') }}" class="hero-action">
+        <i class="fas fa-user-plus"></i>
+        შემოგვიერთდით
+      </a>
+      {% endif %}
+
+      <div class="hero-stats">
+        <div class="stat-item">
+          <div class="stat-number">{{ posts|length }}</div>
+          <div class="stat-label">სასწავლო მასალა</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number">{{ users|length if users else '100+' }}</div>
+          <div class="stat-label">მომხმარებელი</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number">24/7</div>
+          <div class="stat-label">ხელმისაწვდომობა</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="container">
+  <div class="row">
+    {% for post in posts %}
+    <div class="col-md-6 mb-4">
+      <article class="card h-100">
+        <div class="card-body d-flex flex-column">
+          <div class="d-flex justify-content-between align-items-start mb-3">
+            <h2 class="card-title">{{ post.title }}</h2>
+            {% if post.author == current_user %}
+            <div class="blog-actions">
+              <a
+                href="{{ url_for('edit_post', post_id=post.id) }}"
+                class="btn btn-sm btn-outline-secondary"
+              >
+                <i class="fas fa-edit"></i>
+              </a>
+              <button
+                type="button"
+                class="btn btn-sm btn-outline-danger"
+                data-bs-toggle="modal"
+                data-bs-target="#deleteModal{{ post.id }}"
+              >
+                <i class="fas fa-trash"></i>
+              </button>
+            </div>
+            {% endif %}
+          </div>
+
+          <p class="card-text flex-grow-1">{{ post.content[:200] }}...</p>
+
+          <div class="blog-meta">
+            <div class="me-auto">
+              <i class="fas fa-user"></i>{{ post.author.username }}
+              <span class="mx-2">•</span>
+              <i class="far fa-calendar"></i>{{
+              post.date_posted.strftime('%Y-%m-%d') }}
+            </div>
+            <a
+              href="{{ url_for('post', post_id=post.id) }}"
+              class="btn btn-primary"
+            >
+              სრულად ნახვა
+            </a>
+          </div>
+        </div>
+      </article>
+    </div>
+    {% endfor %}
+  </div>
+
+  <!-- Delete Modals -->
+  {% for post in posts %} {% if post.author == current_user %}
+  <div class="modal fade" id="deleteModal{{ post.id }}" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">პოსტის წაშლა</h5>
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="modal"
+          ></button>
+        </div>
+        <div class="modal-body">
+          დარწმუნებული ხართ რომ გსურთ პოსტის წაშლა? ეს მოქმედება შეუქცევადია.
+        </div>
+        <div class="modal-footer">
+          <button
+            type="button"
+            class="btn btn-secondary"
+            data-bs-dismiss="modal"
+          >
+            გაუქმება
+          </button>
+          <form
+            action="{{ url_for('delete_post', post_id=post.id) }}"
+            method="POST"
+            class="d-inline"
+          >
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+            <button type="submit" class="btn btn-danger">წაშლა</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endif %} {% endfor %}
+</div>
+{% endblock %}

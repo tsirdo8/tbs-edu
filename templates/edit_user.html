@@ -1,0 +1,28 @@
+
+{% extends 'base.html' %}
+
+{% block title %} Edit Users{% endblock %}
+
+{% block content %}
+<form method="POST">
+    {{ register_form.hidden_tag() }}  <!-- CSRF token -->
+
+    <label for="name">Name</label>
+    {{ register_form.name() }}
+
+    <label for="lastName">Last Name</label>
+    {{ register_form.lastName() }}
+
+    <label for="date">Date</label>
+    {{ register_form.date() }}
+
+    <label for="gender">Gender</label>
+    {{ register_form.gender() }}
+
+    <label for="password">Password</label>
+    {{ register_form.password() }}
+
+    <button type="submit">Submit</button>
+</form>
+
+{% endblock %}
