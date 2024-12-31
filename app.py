@@ -9,7 +9,6 @@ from flask_wtf import FlaskForm
 import os
 import secrets
 from datetime import datetime
-import pytz
 
 # File upload directories
 UPLOAD_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'static/uploads')
